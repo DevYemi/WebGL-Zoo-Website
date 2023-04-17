@@ -1,0 +1,31 @@
+@mixin spacing-x($value) {
+  & > * {
+    margin: 0px $value;
+
+    &:first-child {
+      margin: 0;
+      margin-right: $value;
+    }
+
+    &:last-child {
+      margin: 0;
+      margin-left: $value;
+    }
+  }
+}
+
+@mixin spacing-y($value) {
+  & > * {
+    margin: $value 0px;
+
+    &:first-child {
+      margin: 0;
+      margin-bottom: $value;
+    }
+
+    &:last-child {
+      margin: 0;
+      margin-top: $value;
+    }
+  }
+}
