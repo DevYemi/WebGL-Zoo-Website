@@ -1,0 +1,167 @@
+.wrapper {
+  height: 100%;
+  font-family: $nunito-font;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  padding-bottom: 3em;
+  height: 100%;
+  row-gap: 5em;
+  overflow: hidden;
+  background-color: #561f49;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    align-items: center;
+    row-gap: 10px;
+
+    > div:first-child {
+      display: flex;
+      align-items: center;
+      column-gap: 20px;
+      flex: 0.6;
+
+      > p {
+        &:first-child {
+          font-weight: 700;
+        }
+        &:last-child {
+          text-transform: uppercase;
+        }
+      }
+
+      span {
+        height: 2px;
+        width: 30px;
+        background-color: $primary-color;
+        border-radius: 10px;
+      }
+    }
+
+    p {
+      text-transform: uppercase;
+    }
+
+    > div:last-child {
+      display: flex;
+      align-items: center;
+      column-gap: 20px;
+    }
+
+    .headerLinks:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+
+  main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    .sec1 {
+      display: flex;
+      justify-content: space-between;
+      text-transform: uppercase;
+      column-gap: 10px;
+
+      > div:first-child {
+        display: flex;
+        flex-direction: column;
+        row-gap: 20px;
+        cursor: pointer;
+
+        &:hover svg {
+          transform: translateX(50px);
+        }
+
+        svg {
+          transition: all 350ms ease-out;
+        }
+      }
+    }
+
+    .sec2 {
+      display: flex;
+      justify-content: space-between;
+
+      .sec2Content {
+        display: flex;
+        flex-direction: column;
+        row-gap: 20px;
+        flex: 1;
+
+        > div:first-child {
+          display: flex;
+          justify-content: space-between;
+          font-size: smaller;
+        }
+
+        > div:last-child {
+          position: relative;
+          height: 72px;
+          p {
+            line-height: 0.9;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-family: sans-serif;
+            position: absolute;
+
+            @include screen-md {
+              font-size: 5rem;
+            }
+          }
+
+          @include screen-md {
+            height: 144px;
+          }
+        }
+
+        @include screen-md {
+          flex: 0.6;
+          max-width: 500px;
+        }
+      }
+
+      .sec2Scroll {
+        display: none;
+        height: fit-content;
+        padding: 1.5em;
+        font-size: 0.8rem;
+        aspect-ratio: 1/1;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+        font-weight: 900;
+        border-radius: 50%;
+        align-self: flex-end;
+        color: black;
+        animation: rotate360 2s linear 0s infinite;
+
+        @keyframes rotate360 {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
+        @include screen-sm {
+          display: flex;
+        }
+      }
+    }
+  }
+
+  @include screen-md {
+    padding: 1em 3em;
+  }
+}
