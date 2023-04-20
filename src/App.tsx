@@ -1,23 +1,34 @@
 import styles from "@/styles/app.module.scss"
 import { Twitter, MusicNoteRounded, EastRounded } from '@mui/icons-material';
-import { useEffect } from "react";
+import { MouseEvent, useEffect, useRef } from "react";
+import UIAnimations from "./utils/gsapAnimation";
 
 function App() {
+  const animation = useRef<UIAnimations | null>(null);
 
+  const handleNavClick = (e: MouseEvent) => {
+    const index = e.currentTarget.getAttribute("data-nav-index")!;
+
+    if (!animation.current?.disable && animation.current?.currentIndex !== +index) {
+      animation.current!.currentIndex = +index
+      const currentActiveNav = document.querySelector(`.${styles.navActive}`);
+
+      currentActiveNav?.classList.remove(styles.navActive);
+      e.currentTarget.classList.add(styles.navActive)
+
+      animation.current?.animate()
+    }
+
+  }
   useEffect(() => {
     const sec2Content = document.querySelector(`[data-sec2-animate-content]`) as HTMLElement;
 
-    console.log(sec2Content)
+    animation.current = new UIAnimations(sec2Content, styles);
+    animation.current.init()
 
-    const children = Array.from(sec2Content.children) as HTMLParagraphElement[];
-
-    console.log(children[0].innerHTML)
-
-
-
-
-    console.log(children[0])
-
+    return () => {
+      animation.current?.dispose()
+    }
 
   }, [])
 
@@ -44,6 +55,13 @@ function App() {
             </div>
             <p>cgi blender <br /> nuke and sculpt!</p>
           </section>
+          <nav className={styles.animateNav}>
+            <ul className={animation.current?.disable ? styles.disableNav : ""}>
+              <li data-nav-index="0" onClick={handleNavClick} className={styles.navActive}></li>
+              <li data-nav-index="1" onClick={handleNavClick}></li>
+              <li data-nav-index="2" onClick={handleNavClick}></li>
+            </ul>
+          </nav>
           <section className={styles.sec2}>
             <div className={styles.sec2Content}>
               <div>

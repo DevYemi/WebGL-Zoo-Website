@@ -87,6 +87,34 @@
       }
     }
 
+    .animateNav {
+      ul {
+        display: flex;
+        flex-direction: column;
+        row-gap: 20px;
+        align-items: flex-end;
+        list-style: none;
+
+        &.disableNav {
+          opacity: 0.5;
+        }
+
+        li {
+          width: 10px;
+          height: 10px;
+          border: 1px solid white;
+          cursor: pointer;
+          border-radius: 2px;
+          transition: all 350ms ease-out;
+
+          &.navActive {
+            transform: scaleX(2);
+            background-color: white;
+          }
+        }
+      }
+    }
+
     .sec2 {
       display: flex;
       justify-content: space-between;
@@ -113,8 +141,9 @@
             font-weight: 900;
             font-family: sans-serif;
             position: absolute;
+            perspective: 200px;
 
-            @include screen-md {
+            @include screen-md(1000px) {
               font-size: 5rem;
             }
           }
