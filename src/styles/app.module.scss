@@ -11,7 +11,18 @@
   height: 100%;
   row-gap: 5em;
   overflow: hidden;
-  background-color: #561f49;
+  background-color: transparent;
+  position: relative;
+
+  .webGlCanvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #561f49;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
 
   .header {
     display: flex;

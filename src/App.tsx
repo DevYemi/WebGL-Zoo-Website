@@ -2,9 +2,11 @@ import styles from "@/styles/app.module.scss"
 import { Twitter, MusicNoteRounded, EastRounded } from '@mui/icons-material';
 import { MouseEvent, useEffect, useRef } from "react";
 import UIAnimations from "./utils/gsapAnimation";
+import WebglExperience from "./webGL";
 
 function App() {
   const animation = useRef<UIAnimations | null>(null);
+  const webGlExperience = useRef<WebglExperience | null>(null);
 
   const handleNavClick = (e: MouseEvent) => {
     const index = e.currentTarget.getAttribute("data-nav-index")!;
@@ -20,11 +22,15 @@ function App() {
     }
 
   }
+
+
   useEffect(() => {
     const sec2Content = document.querySelector(`[data-sec2-animate-content]`) as HTMLElement;
 
-    animation.current = new UIAnimations(sec2Content, styles);
-    animation.current.init()
+    webGlExperience.current = new WebglExperience();
+    animation.current = new UIAnimations(sec2Content, webGlExperience.current, styles);
+    animation.current.init();
+
 
     return () => {
       animation.current?.dispose()
@@ -77,6 +83,7 @@ function App() {
             <p className={styles.sec2Scroll}>Scroll</p>
           </section>
         </main>
+        <canvas className={styles.webGlCanvas} data-webgl_canvas />
       </div>
 
     </div>

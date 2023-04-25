@@ -1,15 +1,18 @@
+import WebglExperience from "@/webGL";
 import { sortElementInnerText } from "./chunks";
 import gsap from 'gsap'
 
 export default class UIAnimations {
     elementWrapper: HTMLElement;
     styles: CSSModuleClasses;
+    webGl: WebglExperience;
     disable: boolean;
     currentIndex: number;
     sortedChildren!: ReturnType<typeof sortElementInnerText>[]
-    constructor(elementWrapper: HTMLElement, styles: CSSModuleClasses) {
+    constructor(elementWrapper: HTMLElement, webGl: WebglExperience, styles: CSSModuleClasses) {
         this.elementWrapper = elementWrapper;
         this.styles = styles;
+        this.webGl = webGl
         this.disable = false;
         this.currentIndex = 0;
     }
@@ -41,6 +44,8 @@ export default class UIAnimations {
         const currentAciveSortedChar = document.querySelectorAll(".char-class.active");
         const newActiveSortedChar = document.querySelectorAll(`.char-class-${this.currentIndex}`);
 
+        console.log(this.webGl.animals)
+
         navWrapper.style.opacity = "0.3"
         const timeline = gsap.timeline()
 
@@ -56,6 +61,7 @@ export default class UIAnimations {
                     currentAciveSortedChar.forEach(child => {
                         child.classList.remove("active")
                     })
+                    this.webGl.animals.animate(this.currentIndex);
                 }
             }
         ).fromTo(
@@ -86,5 +92,6 @@ export default class UIAnimations {
         this.sortedChildren.forEach(child => {
             child.element.innerHTML = child.baseInnerHTML
         })
+        this.webGl.dispose()
     }
 }

@@ -11,5 +11,6 @@ export default defineConfig({
         additionalData: `@use "sass:math"; @import "./base/_index.scss";`
       }
     }
-  }
+  },
+  assetsInclude: ['**/*.glb']
 })
