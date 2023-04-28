@@ -52,8 +52,8 @@ export default class Navigation {
                 let y = e.clientY / window.innerHeight;
 
                 // make values go from -5 to +5
-                x = (x - 0.5);
-                y = (y - 0.5);
+                x = (x - 0.5) * 10;
+                y = (y - 0.5) * 10;
 
                 this.mouseCursor.delta.x += x - this.mouseCursor.previous.x;
                 this.mouseCursor.delta.y += y - this.mouseCursor.previous.y;

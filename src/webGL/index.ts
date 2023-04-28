@@ -84,7 +84,7 @@ export default class WebglExperience {
         this.navigation = new Navigation(this);
         this.animals = new Animals(this);
         this.animals.init();
-        // this.navigation.init();
+        this.navigation.init();
 
         this.tick = this.tick.bind(this);
         this.tick();
@@ -233,7 +233,7 @@ export default class WebglExperience {
 
         if (this.orbitControls) this.orbitControls.update();
         this.animals.update();
-        // this.navigation.update()
+        this.navigation.update()
 
         this.renderer.render(this.scene, this.camera);
         this.stats.end();

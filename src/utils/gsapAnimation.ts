@@ -44,7 +44,6 @@ export default class UIAnimations {
         const currentAciveSortedChar = document.querySelectorAll(".char-class.active");
         const newActiveSortedChar = document.querySelectorAll(`.char-class-${this.currentIndex}`);
 
-        console.log(this.webGl.animals)
 
         navWrapper.style.opacity = "0.3"
         const timeline = gsap.timeline()
