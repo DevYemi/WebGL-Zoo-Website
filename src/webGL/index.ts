@@ -78,7 +78,7 @@ export default class WebglExperience {
         this.setUpRenderer();
         this.setUpLights();
         // this.setUpDefault();
-        this.setUpOrbitControls();
+        // this.setUpOrbitControls();
         this.setUpDebugUI();
 
         this.navigation = new Navigation(this);
