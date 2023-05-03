@@ -70,7 +70,7 @@ export function sortElementInnerText(element: HTMLElement, className: string, in
 
 // Create a debounce function
 export function createDebounceFunc(cb: Function, delay: number) {
-    let timeoutRef: null | number = null;
+    let timeoutRef: null | NodeJS.Timeout = null;
 
 
     return function (...args: any[]) {

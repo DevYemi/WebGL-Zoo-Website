@@ -1,39 +1,36 @@
 import styles from "@/styles/app.module.scss"
 import { Twitter, MusicNoteRounded, EastRounded } from '@mui/icons-material';
 import { MouseEvent, useEffect, useRef } from "react";
-import UIAnimations from "./utils/gsapAnimation";
 import WebglExperience from "./webGL";
 
 function App() {
-  const animation = useRef<UIAnimations | null>(null);
   const webGlExperience = useRef<WebglExperience | null>(null);
 
   const handleNavClick = (e: MouseEvent) => {
     const index = e.currentTarget.getAttribute("data-nav-index")!;
+    const isNotCurrentlyAnimating = !webGlExperience.current?.uiAnimation.disable && webGlExperience.current?.uiAnimation.currentIndex !== +index
 
-    if (!animation.current?.disable && animation.current?.currentIndex !== +index) {
-      animation.current!.currentIndex = +index
+    if (isNotCurrentlyAnimating) {
+      webGlExperience.current!.uiAnimation!.currentIndex = +index;
       const currentActiveNav = document.querySelector(`.${styles.navActive}`);
 
       currentActiveNav?.classList.remove(styles.navActive);
       e.currentTarget.classList.add(styles.navActive)
 
-      animation.current?.animate()
+      webGlExperience.current?.uiAnimation.animate()
     }
 
   }
 
 
   useEffect(() => {
-    const sec2Content = document.querySelector(`[data-sec2-animate-content]`) as HTMLElement;
 
-    webGlExperience.current = new WebglExperience();
-    animation.current = new UIAnimations(sec2Content, webGlExperience.current, styles);
-    animation.current.init();
+
+    webGlExperience.current = new WebglExperience(styles);
 
 
     return () => {
-      animation.current?.dispose()
+      webGlExperience.current?.dispose()
     }
 
   }, [])
@@ -62,7 +59,7 @@ function App() {
             <p>cgi blender <br /> nuke and sculpt!</p>
           </section>
           <nav className={styles.animateNav}>
-            <ul className={animation.current?.disable ? styles.disableNav : ""}>
+            <ul className={webGlExperience.current?.uiAnimation.disable ? styles.disableNav : ""}>
               <li data-nav-index="0" onClick={handleNavClick} className={styles.navActive}></li>
               <li data-nav-index="1" onClick={handleNavClick}></li>
               <li data-nav-index="2" onClick={handleNavClick}></li>
