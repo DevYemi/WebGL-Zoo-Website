@@ -1,6 +1,6 @@
 import WebglExperience from "..";
 import * as THREE from "three"
-import elephantModel from "@/assets/elephantModelTest2.glb";
+import elephantModel from "@/assets/elephantModel.glb";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import gsap from "gsap"
 import { TimeTypes } from "../types";
@@ -28,6 +28,7 @@ export default class Animals {
     activeIndex: { prev: number, latest: number };
     currentDisplayedSide: "head" | "tail";
     activeSetUpAnimalModel!: THREE.Object3D;
+    activeSetUpAnimalModelBox!: THREE.Object3D;
     mouseCursor: THREE.Vector2;
     valueManager: ValuesManagerType;
     constructor(experience: WebglExperience, environment: Environment) {
@@ -46,8 +47,8 @@ export default class Animals {
             tailOffset: -47.5,
             animalsYoyoOffset: {
                 "crocs": 0.5,
-                "kong": 1,
-                "elephant": 2
+                "kong": 0.3,
+                "elephant": 0.5
             }
         }
 
@@ -71,6 +72,7 @@ export default class Animals {
         modelsUrl.forEach(async (url) => {
             const gltf = await gltfLoader.loadAsync(url);
 
+
             gltf.scene.traverse((child) => {
 
                 if (child.name.includes("set-up")) {
@@ -92,11 +94,14 @@ export default class Animals {
             screenSetUps.forEach(child => {
                 if (child.name === "set-up-0") {
                     this.headGroup.add(child);
-                    this.setActiveAnimalModel(child);
+                    this.setActiveAnimalModelBox(child);
+                    this.activeSetUpAnimalModel = this.getSetUpAnimalModel(this.activeSetUpAnimalModelBox);
                 } else {
                     child.visible = false;
-                    const animalModel = this.getSetUpAnimalModel(child);
-                    animalModel.rotateY(Math.PI);
+                    console.log(child)
+                    const animalModelBox = this.getSetUpAnimalModelBox(child);
+                    animalModelBox.rotateY(Math.PI);
+
                     this.tailGroup.add(child);
                 }
             })
@@ -120,34 +125,38 @@ export default class Animals {
         let x = e.clientX / window.innerWidth;
         let y = e.clientY / window.innerHeight;
 
-        // make values go from -0.25 to + 0.25
-        x = (x - 0.5) * 0.5;
-        y = (y - 0.5) * 0.5;
+        // make values go from -0.5 to + 0.5
+        x = (x - 0.5);
+        y = (y - 0.5);
 
         this.mouseCursor.x = x
         this.mouseCursor.y = y
 
-        // this.animateActiveAnimalOnMouseMove()
-
+        this.animateActiveAnimalOnMouseMove()
     }
 
-    setActiveAnimalModel(mesh: THREE.Object3D) {
-        const child = this.getSetUpAnimalModel(mesh);
-        this.activeSetUpAnimalModel = child;
-        this.environment.updateSunLightTarget(child);
+    setActiveAnimalModelBox(mesh: THREE.Object3D) {
+        const boxMesh = this.getSetUpAnimalModelBox(mesh);
+        this.activeSetUpAnimalModelBox = boxMesh;
     }
 
     getSetUpAnimalModel(mesh: THREE.Object3D) {
-        return mesh.children.find(child => !child.name.includes("background"))!
+        return mesh.children[0];
+    }
+
+    getSetUpAnimalModelBox(mesh: THREE.Object3D) {
+        return mesh.children.find(child => child.name.includes("empty"))!
     }
 
 
     animateActiveAnimalOnMouseMove() {
-        if (this.activeSetUpAnimalModel) {
+        if (this.activeSetUpAnimalModelBox) {
+
             gsap.to(this.activeSetUpAnimalModel.rotation, {
                 y: this.mouseCursor.x,
                 x: this.mouseCursor.y,
-                duration: 4
+                duration: 4,
+                onComplete: () => { this.activeSetUpAnimalModel.rotation.reorder("XYZ") }
             })
         }
 
@@ -155,7 +164,6 @@ export default class Animals {
 
     update() {
         if (this.activeSetUpAnimalModel) {
-
             this.activeSetUpAnimalModel.position.y = 0.3 * Math.sin(this.time.elaspedTime * 0.0005) + this.valueManager.animalsYoyoOffset[this.activeSetUpAnimalModel.name as keyof ValuesManagerType["animalsYoyoOffset"]];
         }
 

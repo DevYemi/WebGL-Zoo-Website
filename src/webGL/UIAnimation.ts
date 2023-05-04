@@ -2,10 +2,17 @@ import WebglExperience from "@/webGL";
 import { sortElementInnerText } from "../utils/chunks";
 import gsap from 'gsap'
 import Animals from "./world/Animals";
+import Environment from "./world/Environment";
+import Camera from "./utils/Camera";
+import { CustomEase } from "gsap/CustomEase";
+
+gsap.registerPlugin(CustomEase)
 
 export default class UIAnimations {
     experience: WebglExperience;
+    camera: Camera;
     animals: Animals;
+    environment: Environment;
     elementWrapper: HTMLElement;
     styles: CSSModuleClasses;
     disable: boolean;
@@ -13,7 +20,9 @@ export default class UIAnimations {
     sortedChildren!: ReturnType<typeof sortElementInnerText>[]
     constructor(experience: WebglExperience, styles: CSSModuleClasses) {
         this.experience = experience;
+        this.camera = experience.camera;
         this.animals = experience.world.animals;
+        this.environment = experience.world.environment;
 
         this.elementWrapper = document.querySelector(`[data-sec2-animate-content]`) as HTMLElement;;
         this.styles = styles;
@@ -62,38 +71,41 @@ export default class UIAnimations {
         this.animals.activeIndex.prev = this.animals.activeIndex.latest;
         this.animals.activeIndex.latest = this.currentIndex;
 
-        const currentDisplayedGroup: THREE.Group = this.animals.currentDisplayedSide === "head" ? this.animals.headGroup : this.animals.tailGroup;
-        const currentHiddenGroup: THREE.Group = this.animals.currentDisplayedSide !== "head" ? this.animals.headGroup : this.animals.tailGroup;
+        const outgoingDisplayedGroup: THREE.Group = this.animals.currentDisplayedSide === "head" ? this.animals.headGroup : this.animals.tailGroup;
+        const incomingDisplayedGroup: THREE.Group = this.animals.currentDisplayedSide !== "head" ? this.animals.headGroup : this.animals.tailGroup;
 
-        let nextActivesetUp = currentHiddenGroup.children.find(child => child.name === `set-up-${this.currentIndex}`)!;
-        let prevActivesetup = currentDisplayedGroup.children.find(child => child.name === `set-up-${this.animals.activeIndex.prev}`)!;
-        const inActiveSetups = currentHiddenGroup.children.filter(child => child.name !== `set-up-${this.currentIndex}`);
+        let nextActivesetUp = incomingDisplayedGroup.children.find(child => child.name === `set-up-${this.currentIndex}`)!;
+        let prevActivesetup = outgoingDisplayedGroup.children.find(child => child.name === `set-up-${this.animals.activeIndex.prev}`)!;
+        const inActiveSetups = incomingDisplayedGroup.children.filter(child => child.name !== `set-up-${this.currentIndex}`);
 
 
-        this.animals.setActiveAnimalModel(nextActivesetUp!);
+        this.animals.setActiveAnimalModelBox(nextActivesetUp!);
 
-        inActiveSetups.forEach(model => {
-            currentHiddenGroup.remove(model);
-            currentDisplayedGroup.add(model);
+        inActiveSetups.forEach(setUp => {
+            incomingDisplayedGroup.remove(setUp);
+            outgoingDisplayedGroup.add(setUp);
         })
 
 
-        const nextActivesetUpAnimalModel = this.animals.getSetUpAnimalModel(nextActivesetUp);
-        const prevActiveSetupAnimalModel = this.animals.getSetUpAnimalModel(prevActivesetup);
-
-        console.log(nextActivesetUpAnimalModel, prevActiveSetupAnimalModel)
+        const nextActivesetUpAnimalModelBox = this.animals.getSetUpAnimalModelBox(nextActivesetUp);
+        const prevActiveSetupAnimalModelBox = this.animals.getSetUpAnimalModelBox(prevActivesetup);
+        this.animals.activeSetUpAnimalModel = this.animals.getSetUpAnimalModel(nextActivesetUpAnimalModelBox);
 
         // show active
         if (nextActivesetUp) nextActivesetUp.visible = true;
 
 
-        const timeline = gsap.timeline({ defaults: { duration: 10 } });
+
+        const timeline = gsap.timeline({ defaults: { duration: 2 } });
+
+
+        CustomEase.create("coinFlipEase", "M0,0 C0,0 0.072,0.321 0.166,0.57 0.225,0.727 0.314,0.848 0.33,0.864 0.361,0.897 0.39,0.918 0.43,0.939 0.468,0.96 0.5,0.97 0.545,0.98 0.599,0.992 0.636,0.994 0.695,0.997 0.812,1.002 1,1 1,1 ");
 
         timeline.to(
             currentAciveSortedChar,
             {
                 transform: "translateY(-60px) rotate3d(1,0,0.1,90deg)",
-
+                duration: 0.7,
                 autoAlpha: 0,
                 stagger: 0.1,
                 ease: "power1.inOut",
@@ -113,17 +125,26 @@ export default class UIAnimations {
                 return returnValue
 
             },
-        }, "same+=1.5"
+            ease: "coinFlipEase",
+            duration: 3
+        }, "same+=0.5"
         ).to(this.animals.coinGroup.rotation, {
             z: `+=${Math.PI}`,
-            ease: "linear",
+            ease: "coinFlipEase",
+            duration: 3
+        }, "same+=0.5"
+        ).to([nextActivesetUpAnimalModelBox.rotation, prevActiveSetupAnimalModelBox.rotation], {
+            y: `+=${Math.PI}`,
+            ease: "coinFlipEase",
+            duration: 3,
             onComplete: () => {
                 this.animals.currentDisplayedSide = this.animals.currentDisplayedSide === "head" ? "tail" : "head";
-                currentDisplayedGroup.children.forEach(child => {
+
+                outgoingDisplayedGroup.children.forEach(child => {
                     child.visible = false;
                 })
             }
-        }, "same+=1.5"
+        }, "same+=0.5"
         ).fromTo(
             newActiveSortedChar,
             {
@@ -142,7 +163,7 @@ export default class UIAnimations {
                     this.disable = false;
                     navWrapper.style.opacity = "1"
                 }
-            },
+            }, "same+=2"
         )
 
     }

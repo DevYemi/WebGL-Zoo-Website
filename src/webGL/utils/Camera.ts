@@ -22,18 +22,22 @@ export default class Camera {
         this.perspective = new THREE.PerspectiveCamera(75, this.sizes.aspectRatio, 0.1, 20000);
         this.orbitCamera = new THREE.PerspectiveCamera(75, this.sizes.aspectRatio, 0.1, 20000);
 
+        const cameraHelper = new THREE.CameraHelper(this.perspective);
 
-        this.perspective.position.set(0, 0.2, 2);
+
+        this.perspective.position.set(0, 0.2, 2)
+        // this.perspective.position.set(-800, -80, 800);
         this.orbitCamera.position.set(0, 0.2, 2)
 
         this.scene.add(this.perspective, this.orbitCamera);
+        this.scene.add(cameraHelper)
 
         this.setUpOrbitControls();
-        // this.addDebugUI();
+        this.addDebugUI();
     }
 
     setUpOrbitControls() {
-        this.orbitControls = new OrbitControls(this.perspective, this.canvas);
+        this.orbitControls = new OrbitControls(this.orbitCamera, this.canvas);
 
         this.orbitControls.enableDamping = true;
     }
@@ -45,6 +49,12 @@ export default class Camera {
             }
 
             const cameraFolder = this.debugUI.ui!.addFolder({ title: "Camera", expanded: true });
+
+            cameraFolder.addInput(cameraParams, "position").on('change', () => {
+                this.perspective.position.x = cameraParams.position.x;
+                this.perspective.position.y = cameraParams.position.y;
+                this.perspective.position.z = cameraParams.position.z;
+            })
         }
 
     }

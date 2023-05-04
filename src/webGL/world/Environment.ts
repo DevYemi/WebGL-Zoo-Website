@@ -3,11 +3,15 @@ import WebglExperience from "..";
 import DebugUI from "../utils/DebugUI";
 
 export default class Environment {
+    experience: WebglExperience;
     scene: THREE.Scene;
+    debugUI: DebugUI;
+
     sunLight!: THREE.DirectionalLight;
     pointLight!: THREE.PointLight;
-    debugUI: DebugUI;
+    lightTarget!: THREE.Object3D;
     constructor(experience: WebglExperience) {
+        this.experience = experience
         this.scene = experience.scene;
         this.debugUI = experience.debugUI;
 
@@ -29,10 +33,16 @@ export default class Environment {
         this.sunLight.position.set(184.914, 254.953, -75.373);
         this.sunLight.castShadow = true;
         this.sunLight.shadow.mapSize.set(1024, 1024);
-        this.sunLight.shadow.camera.left = -100;
-        this.sunLight.shadow.camera.right = 100;
-        this.sunLight.shadow.camera.top = 100;
-        this.sunLight.shadow.camera.bottom = -100;
+        this.sunLight.shadow.camera.left = -150;
+        this.sunLight.shadow.camera.right = 150;
+        this.sunLight.shadow.camera.top = 150;
+        this.sunLight.shadow.camera.bottom = -150;
+
+        // Sunlight Target
+        this.lightTarget = new THREE.Object3D();
+        this.lightTarget.position.set(-7.43, -83.43, -163.817413330);
+        this.sunLight.target = this.lightTarget;
+
 
 
         this.pointLight = new THREE.PointLight(0xfdfbd3, 2);
@@ -58,19 +68,24 @@ export default class Environment {
         // this.scene.add(sunLightHelper, sunLightShadowHelper);
     }
 
-    updateSunLightTarget(child: THREE.Object3D) {
-        this.sunLight.target = child;
-    }
-
     addDebugUi() {
         if (this.debugUI.isActive) {
             const lightParams = {
                 sunLightPosition: { x: this.sunLight.position.x, y: this.sunLight.position.y, z: this.sunLight.position.z },
                 pointLightPosition: { x: this.pointLight.position.x, y: this.pointLight.position.y, z: this.pointLight.position.z },
+                targetPosition: { x: this.lightTarget.position.x, y: this.lightTarget.position.y, z: this.lightTarget.position.z },
             }
 
             const lightFolder = this.debugUI.ui!.addFolder({ title: "Lights", expanded: true });
 
+            lightFolder.addInput(lightParams, "targetPosition").on("change", () => {
+                this.lightTarget.position.x = lightParams.targetPosition.x
+                this.lightTarget.position.y = lightParams.targetPosition.y
+                this.lightTarget.position.z = lightParams.targetPosition.z
+
+                this.sunLight.target.updateMatrixWorld();
+
+            })
             lightFolder.addInput(lightParams, "sunLightPosition").on("change", () => {
                 this.sunLight.position.x = lightParams.sunLightPosition.x
                 this.sunLight.position.y = lightParams.sunLightPosition.y
