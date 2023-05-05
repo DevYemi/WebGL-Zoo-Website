@@ -7,6 +7,8 @@ import DebugUI from "./DebugUI";
 export default class Camera {
     perspective: THREE.PerspectiveCamera;
     orbitCamera: THREE.PerspectiveCamera;
+    orthographic: THREE.OrthographicCamera;
+    frustumSize: number;
     canvas: HTMLCanvasElement;
     scene: THREE.Scene;
     time: Time;
@@ -21,6 +23,18 @@ export default class Camera {
         this.debugUI = experience.debugUI;
         this.perspective = new THREE.PerspectiveCamera(75, this.sizes.aspectRatio, 0.1, 20000);
         this.orbitCamera = new THREE.PerspectiveCamera(75, this.sizes.aspectRatio, 0.1, 20000);
+        this.frustumSize = 5;
+        this.orthographic = new THREE.OrthographicCamera(
+            this.sizes.aspectRatio * this.frustumSize / -2,
+            this.sizes.aspectRatio * this.frustumSize / 2,
+            this.sizes.aspectRatio * this.frustumSize / 2,
+            this.sizes.aspectRatio * this.frustumSize / -2,
+            -100,
+            4000
+        )
+
+
+
 
         const cameraHelper = new THREE.CameraHelper(this.perspective);
 
@@ -30,7 +44,7 @@ export default class Camera {
         this.orbitCamera.position.set(0, 0.2, 2)
 
         this.scene.add(this.perspective, this.orbitCamera);
-        this.scene.add(cameraHelper)
+        // this.scene.add(cameraHelper)
 
         this.setUpOrbitControls();
         this.addDebugUI();
@@ -71,6 +85,13 @@ export default class Camera {
         // Update orbit Camera
         this.orbitCamera.aspect = this.sizes.aspectRatio
         this.orbitCamera.updateProjectionMatrix();
+
+        // update orthographic camera
+        this.orthographic.left = this.sizes.aspectRatio * this.frustumSize / -2;
+        this.orthographic.right = this.sizes.aspectRatio * this.frustumSize / 2;
+        this.orthographic.top = this.sizes.aspectRatio * this.frustumSize / 2;
+        this.orthographic.bottom = this.sizes.aspectRatio * this.frustumSize / -2;
+        this.orthographic.updateProjectionMatrix()
     }
 
     dispose() {

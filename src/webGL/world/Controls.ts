@@ -32,7 +32,7 @@ export default class Controls {
         this.time = experience.time;
         this.animateCamera = false;
 
-        this.init()
+        // this.init()
 
     }
 
@@ -74,7 +74,7 @@ export default class Controls {
 
         this.curve.getPointAt(0, this.view.dummyVector);
 
-        this.camera.position.copy(this.view.dummyVector);
+        // this.camera.position.copy(this.view.dummyVector);
 
 
     }
@@ -90,21 +90,21 @@ export default class Controls {
 
             // this.view.progress = Math.abs(Math.sin(this.time.elaspedTime * 0.0001 + 0.5))
 
-            if (this.view.progress < 0) {
-                this.view.progress = 1;
-            }
+            // if (this.view.progress < 0) {
+            //     this.view.progress = 1;
+            // }
 
-            this.view.progress -= 0.0001
-
-
-
-            // console.log(this.view.progress)
+            // this.view.progress -= 0.0001
 
 
-            this.curve.getPointAt(this.view.progress, this.view.dummyVector);
+
+            // // console.log(this.view.progress)
 
 
-            this.camera.position.copy(this.view.dummyVector)
+            // this.curve.getPointAt(this.view.progress, this.view.dummyVector);
+
+
+            // this.camera.position.copy(this.view.dummyVector)
         }
 
     }

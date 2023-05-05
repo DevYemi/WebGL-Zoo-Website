@@ -1,34 +1,58 @@
 import styles from "@/styles/app.module.scss"
 import { Twitter, MusicNoteRounded, EastRounded } from '@mui/icons-material';
-import { MouseEvent, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import WebglExperience from "./webGL";
 
 function App() {
   const webGlExperience = useRef<WebglExperience | null>(null);
 
-  const handleNavClick = (e: MouseEvent) => {
+  const handleNavClick = (e: React.MouseEvent) => {
     const index = e.currentTarget.getAttribute("data-nav-index")!;
     const isNotCurrentlyAnimating = !webGlExperience.current?.uiAnimation.disable && webGlExperience.current?.uiAnimation.currentIndex !== +index
 
     if (isNotCurrentlyAnimating) {
-      webGlExperience.current!.uiAnimation!.currentIndex = +index;
-      const currentActiveNav = document.querySelector(`.${styles.navActive}`);
-
-      currentActiveNav?.classList.remove(styles.navActive);
-      e.currentTarget.classList.add(styles.navActive)
-
-      webGlExperience.current?.uiAnimation.animate()
+      const nextActiveEl = e.currentTarget as HTMLElement;
+      handleAnimation(+index, nextActiveEl)
     }
 
   }
 
+  const handleAnimation = (index: number, nextActiveEl: HTMLElement) => {
+    webGlExperience.current!.uiAnimation!.currentIndex = +index;
+    const currentActiveNav = document.querySelector(`.${styles.navActive}`);
+
+    currentActiveNav?.classList.remove(styles.navActive);
+    nextActiveEl.classList.add(styles.navActive)
+
+    webGlExperience.current?.uiAnimation.animate()
+  }
+
 
   useEffect(() => {
+    const wheelCallback = (e: WheelEvent) => {
+      if (!webGlExperience.current?.uiAnimation.disable) {
+        const currentIndex = +webGlExperience.current?.uiAnimation.currentIndex!;
+        let nextIndex = 0;
+        if (e.deltaY > 0) {
+          nextIndex = (currentIndex + 1) % 3
+        } else {
+          nextIndex = (currentIndex - 1) % 3;
+          if (nextIndex < 0) nextIndex = 2;
+        }
 
+        const nextActiveEl = document.querySelector(`[data-nav-index="${nextIndex}"]`) as HTMLElement
 
+        handleAnimation(nextIndex, nextActiveEl)
+      }
+    }
+
+    window.addEventListener("wheel", wheelCallback);
+
+    return () => window.removeEventListener("wheel", wheelCallback);
+  }, [])
+
+  useEffect(() => {
     webGlExperience.current = new WebglExperience(styles);
-
-
     return () => {
       webGlExperience.current?.dispose()
     }
@@ -67,17 +91,19 @@ function App() {
           </nav>
           <section className={styles.sec2}>
             <div className={styles.sec2Content}>
-              <div>
+              <div className={styles.sec2ContentDate}>
                 <p>01 / 03</p>
                 <p>ModelBling CGI Blender</p>
               </div>
               <div data-sec2-animate-content>
                 <p>Elephant <br /> Li'l  baby</p>
-                <p>Elated <br /> Giraffe</p>
+                <p>Elated <br /> Crocs</p>
                 <p>Annoyed <br /> Chimp</p>
               </div>
             </div>
-            <p className={styles.sec2Scroll}>Scroll</p>
+            <div className={styles.sec2ScrollWrapper}>
+              <p className={styles.sec2Scroll}>Scroll</p>
+            </div>
           </section>
         </main>
         <canvas className={styles.webGlCanvas} data-webgl_canvas />

@@ -1,6 +1,6 @@
 import WebglExperience from "..";
 import * as THREE from "three"
-import elephantModel from "@/assets/elephantModel.glb";
+import elephantModel from "@/assets/elephantModelTest.glb";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import gsap from "gsap"
 import { TimeTypes } from "../types";
@@ -98,7 +98,6 @@ export default class Animals {
                     this.activeSetUpAnimalModel = this.getSetUpAnimalModel(this.activeSetUpAnimalModelBox);
                 } else {
                     child.visible = false;
-                    console.log(child)
                     const animalModelBox = this.getSetUpAnimalModelBox(child);
                     animalModelBox.rotateY(Math.PI);
 
@@ -125,9 +124,9 @@ export default class Animals {
         let x = e.clientX / window.innerWidth;
         let y = e.clientY / window.innerHeight;
 
-        // make values go from -0.5 to + 0.5
-        x = (x - 0.5);
-        y = (y - 0.5);
+        // make values go from -0.25 to + 0.25
+        x = (x - 0.5) * 0.5;
+        y = (y - 0.5) * 0.5;
 
         this.mouseCursor.x = x
         this.mouseCursor.y = y
@@ -163,6 +162,7 @@ export default class Animals {
     }
 
     update() {
+
         if (this.activeSetUpAnimalModel) {
             this.activeSetUpAnimalModel.position.y = 0.3 * Math.sin(this.time.elaspedTime * 0.0005) + this.valueManager.animalsYoyoOffset[this.activeSetUpAnimalModel.name as keyof ValuesManagerType["animalsYoyoOffset"]];
         }

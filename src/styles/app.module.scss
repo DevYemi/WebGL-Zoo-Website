@@ -21,7 +21,7 @@
     background-color: #561f49;
     top: 0;
     left: 0;
-    z-index: 10;
+    z-index: -1;
   }
 
   .header {
@@ -31,6 +31,7 @@
     flex-wrap: wrap;
     align-items: center;
     row-gap: 10px;
+    transform: translateY(-100px);
 
     > div:first-child {
       display: flex;
@@ -87,6 +88,7 @@
         flex-direction: column;
         row-gap: 20px;
         cursor: pointer;
+        transform: translateX(-300px);
 
         &:hover svg {
           transform: translateX(50px);
@@ -95,6 +97,10 @@
         svg {
           transition: all 350ms ease-out;
         }
+      }
+
+      > p {
+        transform: translateX(300px);
       }
     }
 
@@ -136,15 +142,18 @@
         row-gap: 20px;
         flex: 1;
 
-        > div:first-child {
+        > .sec2ContentDate {
           display: flex;
           justify-content: space-between;
           font-size: smaller;
+          transform: translateY(-50px);
+          opacity: 0;
         }
 
         > div:last-child {
           position: relative;
           height: 72px;
+          opacity: 0;
           p {
             line-height: 0.9;
             font-size: 2.5rem;
@@ -169,33 +178,36 @@
           max-width: 500px;
         }
       }
-
-      .sec2Scroll {
-        display: none;
-        height: fit-content;
-        padding: 1.5em;
-        font-size: 0.8rem;
-        aspect-ratio: 1/1;
-        justify-content: center;
-        align-items: center;
-        background-color: white;
-        font-weight: 900;
-        border-radius: 50%;
+      .sec2ScrollWrapper {
         align-self: flex-end;
-        color: black;
-        animation: rotate360 2s linear 0s infinite;
+        transform: scale(0);
+        .sec2Scroll {
+          display: none;
+          height: fit-content;
+          padding: 1.5em;
+          font-size: 0.8rem;
+          aspect-ratio: 1/1;
+          justify-content: center;
+          align-items: center;
+          background-color: white;
+          font-weight: 900;
+          border-radius: 50%;
 
-        @keyframes rotate360 {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
+          color: black;
+          animation: rotate360 2s linear 0s infinite;
 
-        @include screen-sm {
-          display: flex;
+          @keyframes rotate360 {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+
+          @include screen-sm {
+            display: flex;
+          }
         }
       }
     }

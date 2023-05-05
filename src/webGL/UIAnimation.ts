@@ -29,10 +29,11 @@ export default class UIAnimations {
         this.disable = false;
         this.currentIndex = 0;
 
-        this.init()
+        this.setUpFlipText();
+        this.setUpUI();
     }
 
-    init() {
+    setUpFlipText() {
         const children = Array.from(this.elementWrapper.children) as HTMLParagraphElement[];
         this.sortedChildren = []
 
@@ -52,6 +53,52 @@ export default class UIAnimations {
             }
         )
     }
+
+    setUpUI() {
+        const headerWrapper = document.querySelector(`.${this.styles.header}`);
+        const sec1 = document.querySelector(`.${this.styles.sec1}`)!;
+        const sec2ContentDate = document.querySelector(`.${this.styles.sec2ContentDate}`)
+        const rotatedElWrapper = document.querySelector(`.${this.styles.sec2ScrollWrapper}`);
+
+        const tl = gsap.timeline({ defaults: { duration: 1 } });
+
+        tl.to(
+            headerWrapper,
+            {
+                translateY: 0,
+                duration: 1
+            },
+        ).to(
+            sec1.children,
+            {
+                translateX: 0
+            }
+        ).to(
+            this.elementWrapper,
+            {
+                opacity: 1,
+                duration: 2
+            },
+            "bottomSame"
+        ).to(
+            sec2ContentDate,
+            {
+                translateY: 0,
+                opacity: 1
+            },
+            "bottomSame"
+        ).to(
+            rotatedElWrapper,
+            {
+                scale: 1,
+                duration: 1
+            },
+        )
+
+        console.log(this.styles)
+
+    }
+
 
     animate() {
         /**
