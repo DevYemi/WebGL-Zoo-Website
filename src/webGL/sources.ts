@@ -1,10 +1,11 @@
 import { SourceType } from "./types"
+import zooModel from "@/assets/zooModel.glb"
 
 const sources: SourceType[] = [
     {
         name: "animalSetUpModels",
         type: "gltf",
-        path: "/src/assets/elephantModel.glb"
+        path: zooModel
     }
 ]
 
