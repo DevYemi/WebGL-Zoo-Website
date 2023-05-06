@@ -17,12 +17,12 @@ function App() {
 
   }
 
-  const handleAnimation = (index: number, nextActiveEl: HTMLElement) => {
+  const handleAnimation = (index: number, nextActiveNav: HTMLElement) => {
     webGlExperience.current!.uiAnimation!.currentIndex = +index;
     const currentActiveNav = document.querySelector(`.${styles.navActive}`);
 
     currentActiveNav?.classList.remove(styles.navActive);
-    nextActiveEl.classList.add(styles.navActive)
+    nextActiveNav.classList.add(styles.navActive)
 
     webGlExperience.current?.uiAnimation.animate()
   }

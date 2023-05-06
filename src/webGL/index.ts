@@ -6,6 +6,8 @@ import DebugUI from "./utils/DebugUI";
 import Renderer from "./utils/Renderer";
 import World from "./world";
 import UIAnimations from "./UIAnimation";
+import Resources from "./utils/Resources";
+import sources from "./sources";
 
 
 
@@ -21,6 +23,7 @@ export default class WebglExperience {
     debugUI!: DebugUI;
     world!: World;
     uiAnimation!: UIAnimations;
+    resources!: Resources;
 
 
 
@@ -35,6 +38,7 @@ export default class WebglExperience {
         this.time = new Time(this);
         this.camera = new Camera(this);
         this.renderer = new Renderer(this);
+        this.resources = new Resources(sources);
         this.world = new World(this);
         this.uiAnimation = new UIAnimations(this, styles);
 

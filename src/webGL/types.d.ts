@@ -16,3 +16,9 @@ export interface DebugUiTypes {
     ui: Pane | null,
     isActive: boolean,
 }
+
+export interface SourceType {
+    name: string,
+    type: string,
+    path: string
+}

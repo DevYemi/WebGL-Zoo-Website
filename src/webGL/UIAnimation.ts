@@ -26,11 +26,12 @@ export default class UIAnimations {
 
         this.elementWrapper = document.querySelector(`[data-sec2-animate-content]`) as HTMLElement;;
         this.styles = styles;
-        this.disable = false;
+        this.disable = true;
         this.currentIndex = 0;
 
         this.setUpFlipText();
-        this.setUpUI();
+        this.setUpUI()
+
     }
 
     setUpFlipText() {
@@ -60,7 +61,7 @@ export default class UIAnimations {
         const sec2ContentDate = document.querySelector(`.${this.styles.sec2ContentDate}`)
         const rotatedElWrapper = document.querySelector(`.${this.styles.sec2ScrollWrapper}`);
 
-        const tl = gsap.timeline({ defaults: { duration: 1 } });
+        const tl = gsap.timeline({ defaults: { duration: 0.7 } });
 
         tl.to(
             headerWrapper,
@@ -91,11 +92,11 @@ export default class UIAnimations {
             rotatedElWrapper,
             {
                 scale: 1,
-                duration: 1
+                duration: 1,
+                onComplete: () => { this.disable = false; }
             },
-        )
 
-        console.log(this.styles)
+        )
 
     }
 

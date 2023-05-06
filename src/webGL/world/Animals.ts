@@ -1,12 +1,13 @@
 import WebglExperience from "..";
 import * as THREE from "three"
-import elephantModel from "@/assets/elephantModelTest.glb";
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import gsap from "gsap"
 import { TimeTypes } from "../types";
 import Environment from "./Environment";
+import Resources from "../utils/Resources";
+import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
 interface ValuesManagerType {
+    setUp0ModelBoxDefaultPosition: THREE.Vector3
     tailOffset: number,
     animalsYoyoOffset: {
         "crocs": number,
@@ -21,7 +22,8 @@ export default class Animals {
     scene: THREE.Scene;
     time: TimeTypes;
     environment: Environment;
-    models: THREE.Object3D<THREE.Event>[];
+    resources: Resources;
+
     coinGroup: THREE.Group;
     headGroup: THREE.Group;
     tailGroup: THREE.Group;
@@ -36,7 +38,8 @@ export default class Animals {
         this.scene = experience.scene;
         this.time = experience.time;
         this.environment = environment;
-        this.models = []
+        this.resources = experience.resources;
+
         this.coinGroup = new THREE.Group();
         this.headGroup = new THREE.Group();
         this.tailGroup = new THREE.Group();
@@ -44,6 +47,7 @@ export default class Animals {
         this.mouseCursor = new THREE.Vector2(0);
         this.activeIndex = { prev: 0, latest: 0 };
         this.valueManager = {
+            setUp0ModelBoxDefaultPosition: new THREE.Vector3(),
             tailOffset: -47.5,
             animalsYoyoOffset: {
                 "crocs": 0.5,
@@ -52,7 +56,11 @@ export default class Animals {
             }
         }
 
-        this.init();
+        this.init = this.init.bind(this);
+
+        this.resources.on("resourceReady", this.init);
+
+
 
 
         this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -61,60 +69,65 @@ export default class Animals {
     }
 
     init() {
-        this.loadModels()
-    }
-
-    loadModels() {
-        const modelsUrl = [elephantModel];
-        const gltfLoader = new GLTFLoader();
         const screenSetUps: THREE.Object3D[] = []
 
-        modelsUrl.forEach(async (url) => {
-            const gltf = await gltfLoader.loadAsync(url);
+
+        const gltf = this.resources.items.animalSetUpModels as GLTF
 
 
-            gltf.scene.traverse((child) => {
+        gltf.scene.traverse((child) => {
 
-                if (child.name.includes("set-up")) {
-                    screenSetUps.push(child);
-                }
-
-
+            if (child.name.includes("set-up")) {
+                screenSetUps.push(child);
+            }
 
 
-                if (child.name.toLowerCase().includes("background")) {
-                    child.receiveShadow = true;
-                } else {
-                    // animals models
-                    child.castShadow = true;
-                }
 
-            })
 
-            screenSetUps.forEach(child => {
-                if (child.name === "set-up-0") {
-                    this.headGroup.add(child);
-                    this.setActiveAnimalModelBox(child);
-                    this.activeSetUpAnimalModel = this.getSetUpAnimalModel(this.activeSetUpAnimalModelBox);
-                } else {
-                    child.visible = false;
-                    const animalModelBox = this.getSetUpAnimalModelBox(child);
-                    animalModelBox.rotateY(Math.PI);
+            if (child.name.toLowerCase().includes("background")) {
+                child.receiveShadow = true;
+            } else {
+                // animals models
+                child.castShadow = true;
+            }
 
-                    this.tailGroup.add(child);
-                }
-            })
-            // Default tails group matrix
-            this.tailGroup.rotateZ(Math.PI);
-            this.tailGroup.position.setY(this.valueManager.tailOffset);
-
-            // Default coinGroup matrix
-            this.coinGroup.position.y = this.valueManager.tailOffset;
-
-            this.coinGroup.add(this.headGroup, this.tailGroup);
-            this.models.push(gltf.scene);
         })
+
+        screenSetUps.forEach(child => {
+            if (child.name === "set-up-0") {
+                this.headGroup.add(child);
+                this.setActiveAnimalModelBox(child);
+                this.valueManager.setUp0ModelBoxDefaultPosition.copy(this.activeSetUpAnimalModelBox.position);
+                this.activeSetUpAnimalModelBox.position.y = 20;
+                this.activeSetUpAnimalModel = this.getSetUpAnimalModel(this.activeSetUpAnimalModelBox);
+            } else {
+                child.visible = false;
+                const animalModelBox = this.getSetUpAnimalModelBox(child);
+                animalModelBox.rotateY(Math.PI);
+
+                this.tailGroup.add(child);
+            }
+        })
+        // Default tails group matrix
+        this.tailGroup.rotateZ(Math.PI);
+        this.tailGroup.position.setY(this.valueManager.tailOffset);
+
+        // Default coinGroup matrix
+        this.coinGroup.position.y = this.valueManager.tailOffset;
+
+        this.coinGroup.add(this.headGroup, this.tailGroup);
         this.scene.add(this.coinGroup);
+
+
+        // set up default animal bouce in animation
+        gsap.to(
+            this.activeSetUpAnimalModelBox.position,
+            {
+                y: this.valueManager.setUp0ModelBoxDefaultPosition.y,
+                ease: "Bounce.easeOut",
+                duration: 3
+            }
+        )
 
 
     }
