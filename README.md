@@ -6,7 +6,7 @@ Part of my side project on improving my ThreeJs skills.
 
 The Design was gotten from pinterest [Here](https://www.pinterest.com/pin/37928821854199109/)
 
-Its hosted live on vercel [Here](https://adeyanju-adeyemi-lendsqr-fe-test.vercel.app/).
+Its hosted live on vercel [Here](https://3-d-zoo.vercel.app/).
 
 ## Run Locally
 
